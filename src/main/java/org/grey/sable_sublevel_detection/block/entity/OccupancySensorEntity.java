@@ -9,6 +9,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.grey.sable_sublevel_detection.ModEvents;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +45,9 @@ public class OccupancySensorEntity extends BlockEntity {
     public void onLoad() {
         super.onLoad();
         registerSensor();
+        if(subLevelId==null || this.getLevel() == null) return;
+        var occupied = ModEvents.occupied.contains(subLevelId);
+        this.getLevel().setBlockAndUpdate(this.getBlockPos(), getBlockState().setValue(BlockStateProperties.POWERED, occupied));
     }
 
     @Override
