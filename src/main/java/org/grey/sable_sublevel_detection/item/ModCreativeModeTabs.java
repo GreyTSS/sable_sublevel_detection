@@ -13,12 +13,12 @@ import org.grey.sable_sublevel_detection.block.ModBlocks;
 
 import java.util.function.Supplier;
 
-public class ModCreativeModeTabs {
+public class  ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SableSublevelDetection.MODID);
 
     public static final Supplier<CreativeModeTab> DETECTION_TAB = CREATIVE_MODE_TAB.register("detection_tab",
             () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(Items.TARGET))
+                    .icon(() -> new ItemStack(ModBlocks.OCCUPANCY_SENSOR))
                     .title(Component.translatable("creativetab.sable_sublevel_detection.detection_tab"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModBlocks.OCCUPANCY_SENSOR);

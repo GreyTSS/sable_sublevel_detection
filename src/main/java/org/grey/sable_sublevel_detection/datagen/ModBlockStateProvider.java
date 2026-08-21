@@ -22,7 +22,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        allSidesBlockState(ModBlocks.OCCUPANCY_SENSOR);
+        allSidesAndInversionBlockState(ModBlocks.OCCUPANCY_SENSOR);
 
 
     }
@@ -31,7 +31,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(deferredBlock.get(), cubeAll(deferredBlock.get()));
     }
 
-    private void allSidesBlockState(DeferredBlock<?> deferredBlock) {
+    private void allSidesAndInversionBlockState(DeferredBlock<?> deferredBlock) {
         String name = deferredBlock.getId().getPath();
 
         ResourceLocation bottomPowered = ResourceLocation.fromNamespaceAndPath(SableSublevelDetection.MODID, "block/"+name+"_bottom_powered");
@@ -42,13 +42,27 @@ public class ModBlockStateProvider extends BlockStateProvider {
         ResourceLocation sidePowered = ResourceLocation.fromNamespaceAndPath(SableSublevelDetection.MODID, "block/"+name+"_side_powered");
         ResourceLocation sideUnpowered = ResourceLocation.fromNamespaceAndPath(SableSublevelDetection.MODID, "block/"+name+"_side_unpowered");
 
+        ResourceLocation sidePoweredInverted = ResourceLocation.fromNamespaceAndPath(SableSublevelDetection.MODID, "block/"+name+"_side_powered_inverted");
+        ResourceLocation sideUnpoweredInverted = ResourceLocation.fromNamespaceAndPath(SableSublevelDetection.MODID, "block/"+name+"_side_unpowered_inverted");
+
         ModelFile modelPowered = models().cubeBottomTop(name+"_powered", sidePowered, bottomPowered, topPowered);
         ModelFile modelUnPowered = models().cubeBottomTop(name, sideUnpowered, bottomUnpowered, topUnpowered);
-
+        ModelFile modelPoweredInverted = models().cubeBottomTop(name+"_powered_inverted", sidePoweredInverted, bottomPowered, topPowered);
+        ModelFile modelUnPoweredInverted = models().cubeBottomTop(name+"_inverted", sideUnpoweredInverted, bottomUnpowered, topUnpowered);
         getVariantBuilder(deferredBlock.get()).forAllStates(state -> {
             boolean isPowered = state.getValue(BlockStateProperties.POWERED);
+            boolean isInverted = state.getValue(BlockStateProperties.INVERTED);
+
+            ModelFile model;
+
+            if(isPowered) {
+                model = isInverted ? modelPoweredInverted : modelPowered;
+            } else {
+                model = isInverted ? modelUnPoweredInverted : modelUnPowered;
+            }
+
             return ConfiguredModel.builder()
-                    .modelFile(isPowered ? modelPowered : modelUnPowered)
+                    .modelFile(model)
                     .build();
         });
         simpleBlockItem(deferredBlock.get(), modelUnPowered);

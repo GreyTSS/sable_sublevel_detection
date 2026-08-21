@@ -8,7 +8,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -20,28 +19,41 @@ public class OccupancySensorEntity extends BlockEntity {
 
     private UUID subLevelId;
     public static Map<UUID, HashSet<PositionData>> loadedSensors = new HashMap<>();
+
     public void captureSubLevelId(Level level) {
-        if (level.isClientSide || this.subLevelId != null) {
-            return;
-        }
+        if (level.isClientSide || this.subLevelId != null) return;
 
         SubLevelAccess subLevel = SableCompanion.INSTANCE.getContaining(level, this.worldPosition);
-        this.subLevelId = subLevel != null ? subLevel.getUniqueId() : null;
 
+        this.subLevelId = subLevel != null ? subLevel.getUniqueId() : null;
         this.setChanged();
+
+        if(!this.isRemoved()) {
+            registerSensor();
+        }
+    }
+
+    private void registerSensor() {
+        if(this.getLevel() == null || this.subLevelId == null) return;
+        GlobalPos globalPos = GlobalPos.of(this.getLevel().dimension(), this.getBlockPos());
+        loadedSensors.computeIfAbsent(subLevelId, k -> new HashSet<>()).add(new PositionData(globalPos));
     }
 
     @Override
     public void onLoad() {
-        if(this.getLevel() == null) return;
-        loadedSensors.computeIfAbsent(subLevelId, k -> new HashSet<>()).add(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos()),this.level));
+        super.onLoad();
+        registerSensor();
     }
 
     @Override
     public void setRemoved() {
-        if(this.getLevel() == null) return;
-        loadedSensors.get(subLevelId).remove(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos()),this.getLevel()));
-        if(loadedSensors.get(subLevelId).isEmpty()) loadedSensors.remove(subLevelId);
+        super.setRemoved();
+        if(this.getLevel() == null || this.subLevelId == null) return;
+        var sublevelSensors = loadedSensors.get(subLevelId);
+        if(sublevelSensors!=null) {
+            sublevelSensors.remove(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos())));
+            if(loadedSensors.get(subLevelId).isEmpty()) loadedSensors.remove(subLevelId);
+        }
     }
 
 
@@ -55,7 +67,7 @@ public class OccupancySensorEntity extends BlockEntity {
     }
 
 
-    public record PositionData(GlobalPos globalPos, Level level){}
+    public record PositionData(GlobalPos globalPos){}
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -66,6 +78,13 @@ public class OccupancySensorEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.subLevelId = tag.getUUID("SublevelUUID");
+        if(tag.hasUUID("SublevelUUID")) this.subLevelId = tag.getUUID("SublevelUUID");
+
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if(this.getLevel()!=null) captureSubLevelId(this.getLevel());
     }
 }

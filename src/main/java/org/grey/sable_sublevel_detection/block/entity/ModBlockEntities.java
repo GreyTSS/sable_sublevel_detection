@@ -13,8 +13,6 @@ public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, SableSublevelDetection.MODID);
 
 public static final Supplier<BlockEntityType<OccupancySensorEntity>> OCCUPANCY_SENSOR_BE = BLOCK_ENTITIES.register("occupancy_sensor_be", () -> BlockEntityType.Builder.of(OccupancySensorEntity::new, ModBlocks.OCCUPANCY_SENSOR.get()).build(null));
-
-
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }
