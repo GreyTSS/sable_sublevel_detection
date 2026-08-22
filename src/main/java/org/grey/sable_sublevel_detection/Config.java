@@ -20,8 +20,8 @@ public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.ConfigValue<String> CONFIG_VERSION = BUILDER.define("config-version", SableSublevelDetection.MOD_VERSION);
-    private static final ModConfigSpec.IntValue OCCUPANCY_QUERY_TICK_FREQUENCY = BUILDER.defineInRange("occupancy-sensor-query-tick-frequency", 5,1,100);
-    private static final ModConfigSpec.IntValue OCCUPANCY_GRACE_TICK_DURATION = BUILDER.defineInRange("occupancy-sensor-grace-tick-duration", 20,1,100);
+    private static final ModConfigSpec.IntValue OCCUPANCY_QUERY_TICK_FREQUENCY = BUILDER.defineInRange("occupancy-sensor-query-tick-frequency", 2,1,100);
+    private static final ModConfigSpec.IntValue OCCUPANCY_GRACE_TICK_DURATION = BUILDER.defineInRange("occupancy-sensor-grace-tick-duration", 8,1,100);
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static String configVersion;

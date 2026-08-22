@@ -1,7 +1,5 @@
 package org.grey.sable_sublevel_detection.item;
 
-import net.minecraft.world.item.Item;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;

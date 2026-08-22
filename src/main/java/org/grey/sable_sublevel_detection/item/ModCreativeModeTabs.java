@@ -1,11 +1,9 @@
 package org.grey.sable_sublevel_detection.item;
 
-import net.minecraft.client.tutorial.Tutorial;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;
@@ -18,10 +16,10 @@ public class  ModCreativeModeTabs {
 
     public static final Supplier<CreativeModeTab> DETECTION_TAB = CREATIVE_MODE_TAB.register("detection_tab",
             () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(ModBlocks.OCCUPANCY_SENSOR))
+                    .icon(() -> new ItemStack(ModBlocks.OCCUPANCY_SENSOR.get()))
                     .title(Component.translatable("creativetab.sable_sublevel_detection.detection_tab"))
                     .displayItems((itemDisplayParameters, output) -> {
-                        output.accept(ModBlocks.OCCUPANCY_SENSOR);
+                        output.accept(ModBlocks.OCCUPANCY_SENSOR.get());
 
                     }).build());
 

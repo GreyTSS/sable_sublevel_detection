@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(SableSublevelDetection.MODID);
 
+
     public static final DeferredBlock<Block> OCCUPANCY_SENSOR = registerBlock("occupancy_sensor",
             () -> new OccupancySensorBlock(BlockBehaviour.Properties.of().strength(4f).requiresCorrectToolForDrops()));
 

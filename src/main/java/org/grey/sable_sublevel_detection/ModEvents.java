@@ -18,9 +18,9 @@ import static org.grey.sable_sublevel_detection.block.custom.OccupancySensorBloc
 public class ModEvents {
 
     //Current Occupants
-    private static final Map<UUID, HashSet<UUID>> occupants = new HashMap<>();
+    private static final Map<UUID, HashSet<UUID>> sublevelSensors = new HashMap<>();
     public static final Set<UUID> occupied = new HashSet<>();
-
+    public static final Map<UUID, HashSet<UUID>> occupants = new HashMap<>();
     //End Occupants
     private static final Map<UUID, HashSet<UUID>> newOccupants = new HashMap<>();
     private static final Set<UUID> newOccupied = new HashSet<>();
@@ -32,22 +32,31 @@ public class ModEvents {
     //Grace
     private static final Map<UUID, Integer> gracePeriods = new HashMap<>();
 
-
     private static int tickCount = 0;
 
 
-    /*
-
-     */
+    /**
+     * Tracks the occupancy of sublevels that contain loaded Occupancy sensors on an interval defined within
+     * the config.
+     *
+     * Sable does not provide tracking events, so occupancy must be determined by polling the server's player list.
+     * Occupied sublevels are stashed in a set, as well as a map which hold each player occupying a sublevel.
+     * These values are cached and used in the next event as a comparison to determine delta occupants.
+     * Newly occupied sublevels get updated to be POWERED, while newly unoccupied ones are allowed a
+     * grace period before being UNPOWERED
+     * */
     @SubscribeEvent
     public static void tick(ServerTickEvent.Pre event) {
         var server = event.getServer();
+
+        //Grace Period Decrement and Reentries
         if(!gracePeriods.isEmpty()) {
             var iterator = gracePeriods.entrySet().iterator();
             while(iterator.hasNext()) {
                 var entry = iterator.next();
                 var key = entry.getKey();
 
+                //Re-Entered sublevels exit grace period state.
                 if(newOccupied.contains(key)) {
                     iterator.remove();
                     continue;
@@ -67,23 +76,32 @@ public class ModEvents {
 
 
 
-
+        //Gate heavy operations behind config frequency, and only when sensors are loaded
         if(--tickCount > 0 || OccupancySensorEntity.loadedSensors.isEmpty()) return;
-        var start = System.nanoTime();
+
         newOccupants.clear();
         newOccupied.clear();
         tickCount = Config.occupancyQueryTickFrequency;
 
         var playerList = server.getPlayerList().getPlayers();
+
+        /*Sable API is unable to provide a PlayerTrackingSublevelStart event or anything of the kind. Mod author
+        stated it was unfeasible as it would be constantly firing.
+
+        The SableCompanion check is relatively heavy, contributing to 1/3 of the entire footprint of the
+        mod tick event, per testing with Spark in a single-player world with ~70 loaded sublevels each
+        containing sensors.*/
         for(ServerPlayer player : playerList) {
             var sublevel = SableCompanion.INSTANCE.getTrackingOrVehicleSubLevel((Entity) player);
             if(sublevel==null) continue;
             var uuid = sublevel.getUniqueId();
             newOccupied.add(uuid);
             newOccupants.computeIfAbsent(uuid, k -> new HashSet<>()).add(player.getUUID());
+
         }
 
-        if(!newOccupants.equals(occupants)) {
+        //Gate hash operations behind a requisite that a change in worldstate has occurred
+        if(!newOccupants.equals(sublevelSensors)) {
             removedSubevels.clear();
             addedSubevels.clear();
 
@@ -93,21 +111,26 @@ public class ModEvents {
             removedSubevels.removeAll(newOccupied);
             addedSubevels.removeAll(occupied);
 
-
+            //Only update affected blockstates
             if(!addedSubevels.isEmpty()) changeOccupiedState(true, addedSubevels, server);
-
             if(!removedSubevels.isEmpty()) {
-                System.out.println("CONFIG GRACE: " + Config.occupancyGraceTickDuration);
-                System.out.println("CACHED GRACE: " + Config.occupancyGraceTickDuration);
                 for(UUID uuid : removedSubevels) {
-
                     gracePeriods.put(uuid, Config.occupancyGraceTickDuration);
                 }
             }
 
+            //Rebuild caches
+            sublevelSensors.clear();
+            for (var entry : newOccupants.entrySet()) {
+                sublevelSensors.put(entry.getKey(), new HashSet<>(entry.getValue()));
+            }
+
             occupants.clear();
             for (var entry : newOccupants.entrySet()) {
-                occupants.put(entry.getKey(), new HashSet<>(entry.getValue()));
+                var key = entry.getKey();
+                for(var player : entry.getValue()) {
+                    occupants.computeIfAbsent(key, k -> new HashSet<>()).add(player);
+                }
             }
 
             occupied.clear();
@@ -116,9 +139,7 @@ public class ModEvents {
 
 
         }
-        System.out.println("Sensors Loaded: "+OccupancySensorEntity.loadedSensors.size());
-        System.out.println("Sensor Tick Event Time: "+ (System.nanoTime() - start)+"ns!" );
-        System.out.println("Grace Periods: " + gracePeriods.size());
+
 
 
 
@@ -140,18 +161,9 @@ public class ModEvents {
     }
 
     private static void changeOccupiedState(boolean status, UUID occupied, MinecraftServer server) {
-
-            var sublevel = OccupancySensorEntity.loadedSensors.get(occupied);
-            if(sublevel == null) return;
-
-            for(OccupancySensorEntity.PositionData block : sublevel) {
-                var level = server.getLevel(block.globalPos().dimension());
-                if (level==null) continue;
-                var pos = block.globalPos().pos();
-                var state = level.getBlockState(pos);
-                if(state.hasProperty(POWERED)) level.setBlockAndUpdate(pos,state.setValue(POWERED, status));
-
-        }
+            Set<UUID> set = new HashSet<>();
+            set.add(occupied);
+            changeOccupiedState(status, set, server);
     }
 
 

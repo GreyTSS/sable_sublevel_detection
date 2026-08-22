@@ -4,15 +4,11 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import org.grey.sable_sublevel_detection.block.ModBlocks;
-import org.grey.sable_sublevel_detection.item.ModItems;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraft.data.models.model.TextureMapping.pattern;
 
 public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {

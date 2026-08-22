@@ -17,6 +17,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * OccupancySensorEntity contains the static field registry of all currently loaded sensors belonging to sublevels, to limit query later.
+ * the sublevel ID is captured on level change to allow for sensors placed globally to operate normally when assembled into sublevels.
+ */
 public class OccupancySensorEntity extends BlockEntity {
 
     private UUID subLevelId;
