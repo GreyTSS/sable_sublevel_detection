@@ -1,5 +1,5 @@
 
-# Sable: Sublevel Detection
+# Sable: Sublevel Detection - Dead Man's Switch
 This mod, as well as its assets, were created by human hands. No Generative AI was used for any of the code, English, or art in this mod.
 
 A mod that currently adds a single sensor to interact with Sable sublevels and give players redstone feedback related to whether a sublevel is being tracked by a player or not.
