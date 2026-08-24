@@ -18,7 +18,7 @@ public class ModBlocks {
 
 
     public static final DeferredBlock<Block> OCCUPANCY_SENSOR = registerBlock("occupancy_sensor",
-            () -> new OccupancySensorBlock(BlockBehaviour.Properties.of().strength(4f).requiresCorrectToolForDrops()));
+            () -> new OccupancySensorBlock(BlockBehaviour.Properties.of().strength(4f).requiresCorrectToolForDrops().lightLevel(state -> state.getValue(OccupancySensorBlock.INVERTED) ^ state.getValue(OccupancySensorBlock.POWERED) ? 7:0)));
 
 
 

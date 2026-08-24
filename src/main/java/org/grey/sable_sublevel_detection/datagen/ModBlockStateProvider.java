@@ -47,8 +47,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         ModelFile modelPowered = models().cubeBottomTop(name+"_powered", sidePowered, bottomPowered, topPowered);
         ModelFile modelUnPowered = models().cubeBottomTop(name, sideUnpowered, bottomUnpowered, topUnpowered);
-        ModelFile modelPoweredInverted = models().cubeBottomTop(name+"_powered_inverted", sidePoweredInverted, bottomPowered, topPowered);
-        ModelFile modelUnPoweredInverted = models().cubeBottomTop(name+"_inverted", sideUnpoweredInverted, bottomUnpowered, topUnpowered);
+        ModelFile modelPoweredInverted = models().cubeBottomTop(name+"_powered_inverted", sidePoweredInverted, bottomUnpowered, topPowered);
+        ModelFile modelUnPoweredInverted = models().cubeBottomTop(name+"_inverted", sideUnpoweredInverted, bottomPowered, topUnpowered);
         getVariantBuilder(deferredBlock.get()).forAllStates(state -> {
             boolean isPowered = state.getValue(BlockStateProperties.POWERED);
             boolean isInverted = state.getValue(BlockStateProperties.INVERTED);
