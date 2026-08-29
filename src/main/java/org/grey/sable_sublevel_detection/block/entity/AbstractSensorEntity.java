@@ -23,10 +23,9 @@ import java.util.UUID;
  * OccupancySensorEntity contains the static field registry of all currently loaded sensors belonging to sublevels, to limit query later.
  * the sublevel ID is captured on level change to allow for sensors placed globally to operate normally when assembled into sublevels.
  */
-public class AbstractSensorEntity extends BlockEntity {
+public abstract class AbstractSensorEntity extends BlockEntity {
 
     private UUID subLevelId;
-    public static Map<UUID, HashSet<PositionData>> loadedSensors = new HashMap<>();
 
     public void captureSubLevelId(Level level) {
         if (level.isClientSide || this.subLevelId != null) return;
@@ -44,7 +43,7 @@ public class AbstractSensorEntity extends BlockEntity {
     private void registerSensor() {
         if(this.getLevel() == null || this.subLevelId == null) return;
         GlobalPos globalPos = GlobalPos.of(this.getLevel().dimension(), this.getBlockPos());
-        loadedSensors.computeIfAbsent(subLevelId, k -> new HashSet<>()).add(new PositionData(globalPos));
+        getRegistry().computeIfAbsent(subLevelId, k -> new HashSet<>()).add(new PositionData(globalPos));
     }
 
     @Override
@@ -60,10 +59,10 @@ public class AbstractSensorEntity extends BlockEntity {
     public void setRemoved() {
         super.setRemoved();
         if(this.getLevel() == null || this.subLevelId == null) return;
-        var sublevelSensors = loadedSensors.get(subLevelId);
+        var sublevelSensors = getRegistry().get(subLevelId);
         if(sublevelSensors!=null) {
-            sublevelSensors.remove(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos())));
-            if(loadedSensors.get(subLevelId).isEmpty()) loadedSensors.remove(subLevelId);
+            getRegistry().remove(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos())));
+            if(getRegistry().get(subLevelId).isEmpty()) getRegistry().remove(subLevelId);
         }
     }
 
@@ -79,6 +78,8 @@ public class AbstractSensorEntity extends BlockEntity {
 
     }
 
+
+    protected abstract Map<UUID,HashSet<PositionData>>getRegistry();
 
 
 

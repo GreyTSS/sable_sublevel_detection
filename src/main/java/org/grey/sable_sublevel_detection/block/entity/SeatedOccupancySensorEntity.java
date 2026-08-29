@@ -2,6 +2,12 @@ package org.grey.sable_sublevel_detection.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
+import org.grey.sable_sublevel_detection.PositionData;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * OccupancySensorEntity contains the static field registry of all currently loaded sensors belonging to sublevels, to limit query later.
@@ -9,10 +15,10 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class SeatedOccupancySensorEntity extends AbstractSensorEntity {
 
-
+    public static Map<UUID, HashSet<PositionData>> loadedSensors = new HashMap<>();
     public SeatedOccupancySensorEntity(BlockPos pos, BlockState blockState) {
         super(ModBlockEntities.SEATED_OCCUPANCY_SENSOR_BE.get(), pos, blockState);
     }
-
-
+    @Override
+    protected Map<UUID,HashSet<PositionData>>getRegistry() {return SeatedOccupancySensorEntity.loadedSensors;}
 }

@@ -188,7 +188,7 @@ public class ModEvents {
                         }
                     }
                 }
-                if(seatedOccupancySensorActive) {
+                if(seatedOccupancySensorActive && !seatedRemoved.isEmpty()) {
                     changeOccupiedState(false, seatedRemoved, SeatedOccupancySensorEntity.loadedSensors, server);
                     System.out.println("Seated Occupancy Sensor Updated False");
                 }
@@ -205,7 +205,8 @@ public class ModEvents {
             seatedOccupancySensorOccupantsOld.clear();
             seatedOccupancySensorOccupantsOld.putAll(seatedOccupancySensorOccupantsNew);
 
-
+            seatedSublevelsOld.clear();
+            seatedSublevelsOld.addAll(seatedSublevelsNew);
 
 
 
