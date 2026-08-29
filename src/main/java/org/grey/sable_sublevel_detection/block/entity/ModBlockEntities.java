@@ -15,12 +15,17 @@ public class ModBlockEntities {
             SableSublevelDetection.MODID);
 
 
-    //Block Entities
+    //Occupancy Sensor Block Entity
     public static final Supplier<BlockEntityType<OccupancySensorEntity>> OCCUPANCY_SENSOR_BE = BLOCK_ENTITIES.register(
         "occupancy_sensor_be",
         () -> BlockEntityType.Builder.of(
                 OccupancySensorEntity::new,
                 ModBlocks.OCCUPANCY_SENSOR.get()).build(null));
+    public static final Supplier<BlockEntityType<SeatedOccupancySensorEntity>> SEATED_OCCUPANCY_SENSOR_BE = BLOCK_ENTITIES.register(
+            "seated_occupancy_sensor_be",
+            () -> BlockEntityType.Builder.of(
+                    SeatedOccupancySensorEntity::new,
+                    ModBlocks.SEATED_OCCUPANCY_SENSOR.get()).build(null));
 
 
 

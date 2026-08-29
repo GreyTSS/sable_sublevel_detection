@@ -23,7 +23,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         allSidesAndInversionBlockState(ModBlocks.OCCUPANCY_SENSOR);
-
+        allSidesAndInversionBlockState(ModBlocks.SEATED_OCCUPANCY_SENSOR);
 
     }
 
@@ -31,6 +31,10 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockWithItem(deferredBlock.get(), cubeAll(deferredBlock.get()));
     }
 
+    /*
+    Alterations to a simple helper method ended in this monstrosity of a function, but assuming that I will follow convention on future sensors
+    has led me to keep it.
+     */
     private void allSidesAndInversionBlockState(DeferredBlock<?> deferredBlock) {
         String name = deferredBlock.getId().getPath();
 

@@ -8,7 +8,7 @@ import org.grey.sable_sublevel_detection.SableSublevelDetection;
 import org.grey.sable_sublevel_detection.block.entity.OccupancySensorEntity;
 import java.util.UUID;
 
-import static org.grey.sable_sublevel_detection.block.custom.OccupancySensorBlock.INVERTED;
+import static org.grey.sable_sublevel_detection.block.custom.AbstractSensorBlock.INVERTED;
 
 /**
  * Exposes methods to CC:Tweaked computers when installed. Allows them to query a sensor for occupancy count, names and uuids
@@ -24,8 +24,8 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
 
     @LuaFunction
     public int getOccupancyCount(OccupancySensorEntity sensor) {
-        if(sensor.getSubLevelId() == null || ModEvents.occupants.get(sensor.getSubLevelId()) == null) return 0;
-        return ModEvents.occupants.get(sensor.getSubLevelId()).size();
+        if(sensor.getSubLevelId() == null || ModEvents.getOccupantsMap().get(sensor.getSubLevelId()) == null) return 0;
+        return ModEvents.getOccupants(sensor.getSubLevelId()).size();
     }
 
     @LuaFunction
@@ -34,8 +34,8 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
 
         if(sensor.getSubLevelId() == null || level == null) return new String[0];
 
-        if(ModEvents.occupants.get(sensor.getSubLevelId()) != null && !ModEvents.occupants.get(sensor.getSubLevelId()).isEmpty()) {
-            UUID[] uuids = ModEvents.occupants.get(sensor.getSubLevelId()).toArray(UUID[]::new);
+        if(ModEvents.getOccupantsMap().get(sensor.getSubLevelId()) != null && !ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).isEmpty()) {
+            UUID[] uuids = ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).toArray(UUID[]::new);
             var len = uuids.length;
             String[] playerNames = new String[len];
             for (var i = 0; i < len; i++) {
@@ -51,8 +51,8 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
     public String[] getOccupantsUUIDs (OccupancySensorEntity sensor) {
         var level = sensor.getLevel();
         if(sensor.getSubLevelId() == null || level == null) return new String[0];
-        if(ModEvents.occupants.get(sensor.getSubLevelId()) != null && !ModEvents.occupants.get(sensor.getSubLevelId()).isEmpty()) {
-            UUID[] uuids = ModEvents.occupants.get(sensor.getSubLevelId()).toArray(UUID[]::new);
+        if(ModEvents.getOccupantsMap().get(sensor.getSubLevelId()) != null && !ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).isEmpty()) {
+            UUID[] uuids = ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).toArray(UUID[]::new);
             var len = uuids.length;
             String[] uuidStrings = new String[len];
             for(var i = 0; i < len; i++) {

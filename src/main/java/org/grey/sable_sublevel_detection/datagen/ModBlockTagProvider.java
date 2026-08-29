@@ -29,8 +29,11 @@ public class ModBlockTagProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(ModBlocks.OCCUPANCY_SENSOR.get());
+                .add(ModBlocks.OCCUPANCY_SENSOR.get())
+                .add(ModBlocks.SEATED_OCCUPANCY_SENSOR.get());
+
         tag(WRENCH_PICKUP)
-                .add(ModBlocks.OCCUPANCY_SENSOR.get());
+                .add(ModBlocks.OCCUPANCY_SENSOR.get())
+                .add(ModBlocks.SEATED_OCCUPANCY_SENSOR.get());
     }
 }

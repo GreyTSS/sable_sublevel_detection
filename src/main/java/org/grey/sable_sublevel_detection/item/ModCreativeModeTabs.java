@@ -20,7 +20,7 @@ public class  ModCreativeModeTabs {
                     .title(Component.translatable("creativetab.sable_sublevel_detection.detection_tab"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModBlocks.OCCUPANCY_SENSOR.get());
-
+                        output.accept(ModBlocks.SEATED_OCCUPANCY_SENSOR.get());
                     }).build());
 
 

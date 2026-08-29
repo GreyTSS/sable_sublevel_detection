@@ -8,7 +8,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;
+import org.grey.sable_sublevel_detection.block.custom.AbstractSensorBlock;
 import org.grey.sable_sublevel_detection.block.custom.OccupancySensorBlock;
+import org.grey.sable_sublevel_detection.block.custom.SeatedOccupancySensorBlock;
 import org.grey.sable_sublevel_detection.item.ModItems;
 
 import java.util.function.Supplier;
@@ -18,8 +20,9 @@ public class ModBlocks {
 
 
     public static final DeferredBlock<Block> OCCUPANCY_SENSOR = registerBlock("occupancy_sensor",
-            () -> new OccupancySensorBlock(BlockBehaviour.Properties.of().strength(4f).requiresCorrectToolForDrops().lightLevel(state -> state.getValue(OccupancySensorBlock.INVERTED) ^ state.getValue(OccupancySensorBlock.POWERED) ? 7:0)));
-
+            () -> new OccupancySensorBlock(BlockBehaviour.Properties.of().strength(4f).requiresCorrectToolForDrops().lightLevel(state -> state.getValue(AbstractSensorBlock.INVERTED) ^ state.getValue(AbstractSensorBlock.POWERED) ? 7:0)));
+    public static final DeferredBlock<Block> SEATED_OCCUPANCY_SENSOR = registerBlock("seated_occupancy_sensor",
+            () -> new SeatedOccupancySensorBlock(BlockBehaviour.Properties.of().strength(4f).requiresCorrectToolForDrops().lightLevel(state -> state.getValue(AbstractSensorBlock.INVERTED) ^ state.getValue(AbstractSensorBlock.POWERED) ? 7:0)));
 
 
 

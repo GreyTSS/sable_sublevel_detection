@@ -12,7 +12,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.grey.sable_sublevel_detection.block.ModBlocks;
 import org.grey.sable_sublevel_detection.block.entity.ModBlockEntities;
@@ -25,7 +24,8 @@ import org.slf4j.Logger;
 @Mod(SableSublevelDetection.MODID)
 public class SableSublevelDetection {
     public static final String MODID = "sable_sublevel_detection";
-    public static final String MOD_VERSION = "0.1";
+    public static final String MOD_VERSION = "1.0";
+    public static final String CONFIG_VERSION = "1.0";
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -38,8 +38,6 @@ public class SableSublevelDetection {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
         ModBlockEntities.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -55,10 +53,7 @@ public class SableSublevelDetection {
 
     }
 
-    // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
 
-    }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent

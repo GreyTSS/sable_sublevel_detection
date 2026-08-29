@@ -17,7 +17,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         dropSelf(ModBlocks.OCCUPANCY_SENSOR.get());
-
+        dropSelf(ModBlocks.SEATED_OCCUPANCY_SENSOR.get());
     }
 
     @Override

@@ -19,12 +19,23 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
     protected void buildRecipes(RecipeOutput recipeOutput) {
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.OCCUPANCY_SENSOR.get())
                 .pattern("IEI")
-                .pattern("CSC")
+                .pattern("COC")
                 .pattern("CRC")
                 .define('I', Items.IRON_INGOT)
                 .define('C', Items.COBBLESTONE)
                 .define('E', Items.ENDER_EYE)
-                .define('S', Items.OBSERVER)
+                .define('O', Items.OBSERVER)
+                .define('R', Items.REDSTONE_BLOCK)
+                .unlockedBy("has_observer", has(Items.OBSERVER)).save(recipeOutput);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SEATED_OCCUPANCY_SENSOR.get())
+                .pattern("IVI")
+                .pattern("COC")
+                .pattern("CRC")
+                .define('I', Items.IRON_INGOT)
+                .define('C', Items.COBBLESTONE)
+                .define('V', Items.MINECART)
+                .define('O', Items.OBSERVER)
                 .define('R', Items.REDSTONE_BLOCK)
                 .unlockedBy("has_observer", has(Items.OBSERVER)).save(recipeOutput);
 
