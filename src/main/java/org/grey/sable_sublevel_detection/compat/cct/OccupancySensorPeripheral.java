@@ -40,7 +40,7 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
             String[] playerNames = new String[len];
             for (var i = 0; i < len; i++) {
                 var player = level.getPlayerByUUID(uuids[i]);
-                if (player != null) playerNames[i] = String.valueOf(player.getName());
+                if (player != null) playerNames[i] = player.getName().getString();
             }
             return playerNames;
         }

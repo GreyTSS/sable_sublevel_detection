@@ -77,6 +77,7 @@ public class ModEvents {
     @SubscribeEvent
     public static void tick(ServerTickEvent.Pre event) {
         //Sensors to be checked
+        var time = System.nanoTime();
         boolean occupancySensorActive       = !OccupancySensorEntity.loadedSensors.isEmpty();
         boolean seatedOccupancySensorActive = !SeatedOccupancySensorEntity.loadedSensors.isEmpty();
 
@@ -141,11 +142,12 @@ public class ModEvents {
                 if(seatedOccupancySensorActive && player.isPassenger())  {
                     seatedPlayersNew.add(player.getUUID());
                     seatedSublevelsNew.add(uuid);
+                    System.out.println("Player "+player.getName().getString()+" has seated.");
                 }
             }
         }
 
-        if(!sublevelsOccupiedNew.equals(sublevelsOccupiedOld)) {
+        if(!sublevelsOccupiedNew.equals(sublevelsOccupiedOld) || !seatedSublevelsNew.equals(seatedSublevelsOld)) {
             //Clear
             sublevelOccupiedAdded.clear();
             sublevelOccupiedRemoved.clear();
@@ -160,16 +162,16 @@ public class ModEvents {
             Set<UUID> seatedRemoved = new HashSet<>();
 
             if(seatedOccupancySensorActive) {
-                seatedAdded.addAll(seatedSublevelsOld);
-                seatedRemoved.addAll(seatedPlayersNew);
-                seatedRemoved.removeAll(seatedSublevelsOld);
-                seatedAdded.removeAll(seatedSublevelsNew);
-                seatedRemoved.removeAll(seatedSublevelsOld);
+                seatedAdded.addAll(seatedSublevelsNew);
+                seatedRemoved.addAll(seatedSublevelsOld);
+
+                seatedAdded.removeAll(seatedSublevelsOld);
+                seatedRemoved.removeAll(seatedSublevelsNew);
             }
 
 
 
-            if(!sublevelOccupiedAdded.isEmpty()) {
+            if(!sublevelOccupiedAdded.isEmpty() || !seatedAdded.isEmpty()) {
                 if(occupancySensorActive) {
                     Set<UUID> occupancyUpdates = new HashSet<UUID>();
                     changeOccupiedState(true, sublevelOccupiedAdded, OccupancySensorEntity.loadedSensors, server);
@@ -179,7 +181,7 @@ public class ModEvents {
                     changeOccupiedState(true, seatedAdded, SeatedOccupancySensorEntity.loadedSensors, server);
                 }
             }
-            if(!sublevelOccupiedRemoved.isEmpty()) {
+            if(!sublevelOccupiedRemoved.isEmpty() || !seatedRemoved.isEmpty()) {
                 if(occupancySensorActive) {
                     for(UUID uuid : sublevelOccupiedRemoved) {
                         if(OccupancySensorEntity.loadedSensors.containsKey(uuid)) {
@@ -190,31 +192,23 @@ public class ModEvents {
                 }
                 if(seatedOccupancySensorActive && !seatedRemoved.isEmpty()) {
                     changeOccupiedState(false, seatedRemoved, SeatedOccupancySensorEntity.loadedSensors, server);
-                    System.out.println("Seated Occupancy Sensor Updated False");
                 }
             }
-
-            //System.out.println();
-
-            sublevelsOccupiedOld.clear();
-            sublevelsOccupiedOld.addAll(sublevelsOccupiedNew);
-
-            occupancySensorOccupantsOld.clear();
-            occupancySensorOccupantsOld.putAll(occupancySensorOccupantsNew);
-
-            seatedOccupancySensorOccupantsOld.clear();
-            seatedOccupancySensorOccupantsOld.putAll(seatedOccupancySensorOccupantsNew);
-
-            seatedSublevelsOld.clear();
-            seatedSublevelsOld.addAll(seatedSublevelsNew);
-
-
-
         }
 
 
 
+        sublevelsOccupiedOld.clear();
+        sublevelsOccupiedOld.addAll(sublevelsOccupiedNew);
 
+        occupancySensorOccupantsOld.clear();
+        occupancySensorOccupantsOld.putAll(occupancySensorOccupantsNew);
+
+        seatedOccupancySensorOccupantsOld.clear();
+        seatedOccupancySensorOccupantsOld.putAll(seatedOccupancySensorOccupantsNew);
+
+        seatedSublevelsOld.clear();
+        seatedSublevelsOld.addAll(seatedSublevelsNew);
 
 
 
