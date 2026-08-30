@@ -5,6 +5,9 @@ import net.neoforged.fml.ModList;
 
 public class CompatCCTweaked {
     public static void register() {
-        if(ModList.get().isLoaded("computercraft")) ComputerCraftAPI.registerGenericSource(new OccupancySensorPeripheral());
+        if(ModList.get().isLoaded("computercraft")) {
+            ComputerCraftAPI.registerGenericSource(new OccupancySensorPeripheral());
+            ComputerCraftAPI.registerGenericSource(new SeatedOccupancySensorPeripheral());
+        }
     }
 }

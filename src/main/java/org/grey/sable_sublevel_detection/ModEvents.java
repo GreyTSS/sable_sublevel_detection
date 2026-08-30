@@ -142,6 +142,7 @@ public class ModEvents {
                 if(seatedOccupancySensorActive && player.isPassenger())  {
                     seatedPlayersNew.add(player.getUUID());
                     seatedSublevelsNew.add(uuid);
+                    seatedOccupancySensorOccupantsNew.computeIfAbsent(uuid, k -> new HashSet<>()).add(player.getUUID());
                     System.out.println("Player "+player.getName().getString()+" has seated.");
                 }
             }
@@ -171,29 +172,29 @@ public class ModEvents {
 
 
 
-            if(!sublevelOccupiedAdded.isEmpty() || !seatedAdded.isEmpty()) {
-                if(occupancySensorActive) {
-                    Set<UUID> occupancyUpdates = new HashSet<UUID>();
-                    changeOccupiedState(true, sublevelOccupiedAdded, OccupancySensorEntity.loadedSensors, server);
-                    System.out.println("Occupancy Sensor Updated True");
-                }
-                if(seatedOccupancySensorActive) {
-                    changeOccupiedState(true, seatedAdded, SeatedOccupancySensorEntity.loadedSensors, server);
-                }
+            //Occupancy Sensor
+            if(occupancySensorActive && !sublevelOccupiedAdded.isEmpty()) {
+                Set<UUID> occupancyUpdates = new HashSet<UUID>();
+                changeOccupiedState(true, sublevelOccupiedAdded, OccupancySensorEntity.loadedSensors, server);
             }
-            if(!sublevelOccupiedRemoved.isEmpty() || !seatedRemoved.isEmpty()) {
-                if(occupancySensorActive) {
-                    for(UUID uuid : sublevelOccupiedRemoved) {
-                        if(OccupancySensorEntity.loadedSensors.containsKey(uuid)) {
-                            System.out.println("Grace Period Added!");
-                            gracePeriods.put(uuid, Config.occupancyGraceTickDuration);
-                        }
+
+            if(!sublevelOccupiedRemoved.isEmpty() && occupancySensorActive) {
+                for (UUID uuid : sublevelOccupiedRemoved) {
+                    if (OccupancySensorEntity.loadedSensors.containsKey(uuid)) {
+                        gracePeriods.put(uuid, Config.occupancyGraceTickDuration);
                     }
                 }
-                if(seatedOccupancySensorActive && !seatedRemoved.isEmpty()) {
-                    changeOccupiedState(false, seatedRemoved, SeatedOccupancySensorEntity.loadedSensors, server);
-                }
             }
+
+
+            //Seated Occupancy Sensor
+            if(seatedOccupancySensorActive && !seatedAdded.isEmpty()) {
+                changeOccupiedState(true, seatedAdded, SeatedOccupancySensorEntity.loadedSensors, server);
+            }
+            if(seatedOccupancySensorActive && !seatedRemoved.isEmpty()) {
+                changeOccupiedState(false, seatedRemoved, SeatedOccupancySensorEntity.loadedSensors, server);
+            }
+
         }
 
 
@@ -336,12 +337,21 @@ public class ModEvents {
 
 
     public static Set<UUID> getOccupants(UUID sublevel) {
-        return(new HashSet<>(sublevelsOccupantsOld.get(sublevel)));
+        return(new HashSet<>(sublevelsOccupantsNew.get(sublevel)));
     }
 
     public static HashMap<UUID, HashSet<UUID>> getOccupantsMap() {
-        return(new HashMap<>(sublevelsOccupantsOld));
+        return(new HashMap<>(sublevelsOccupantsNew));
     }
+    public static Set<UUID> getSeatedOccupants(UUID sublevel) {
+        return(new HashSet<>(seatedOccupancySensorOccupantsNew.get(sublevel)));
+    }
+
+    public static Map<UUID, HashSet<UUID>> getSeatedOccupantsMap() {
+        return(new HashMap<>(seatedOccupancySensorOccupantsNew));
+    }
+
+
 
 
 }

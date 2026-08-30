@@ -53,9 +53,9 @@ public class OccupancySensorBlock extends AbstractSensorBlock {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if(Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.translatable("tooltip."+ SableSublevelDetection.MODID+".occupancy_sensor.tooltip2"));
+            tooltipComponents.add(Component.translatable("tooltip."+ SableSublevelDetection.MODID+".occupancy_sensor.tooltip"));
         } else {
-            tooltipComponents.add(Component.translatable("tooltip."+ SableSublevelDetection.MODID+".occupancy_sensor.tooltip1"));
+            tooltipComponents.add(Component.translatable("tooltip."+ SableSublevelDetection.MODID+".shift_tooltip"));
         }
 
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);

@@ -6,6 +6,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.grey.sable_sublevel_detection.ModEvents;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;
 import org.grey.sable_sublevel_detection.block.entity.OccupancySensorEntity;
+import org.grey.sable_sublevel_detection.block.entity.SeatedOccupancySensorEntity;
+
 import java.util.UUID;
 
 import static org.grey.sable_sublevel_detection.block.custom.AbstractSensorBlock.INVERTED;
@@ -14,28 +16,28 @@ import static org.grey.sable_sublevel_detection.block.custom.AbstractSensorBlock
  * Exposes methods to CC:Tweaked computers when installed. Allows them to query a sensor for occupancy count, names and uuids
  * of occupying players, and set/get inversion state. Redstone can already be received through CraftOS's Redstone API.
  */
-public class OccupancySensorPeripheral implements GenericPeripheral {
+public class SeatedOccupancySensorPeripheral implements GenericPeripheral {
 
     @Override
     public String id() {
-        return SableSublevelDetection.MODID+":occupancy_sensor";
+        return SableSublevelDetection.MODID+":seated_occupancy_sensor";
     }
 
 
     @LuaFunction
-    public int getOccupancyCount(OccupancySensorEntity sensor) {
+    public int getOccupancyCount(SeatedOccupancySensorEntity sensor) {
         if(sensor.getSubLevelId() == null || ModEvents.getOccupantsMap().get(sensor.getSubLevelId()) == null) return 0;
-        return ModEvents.getOccupants(sensor.getSubLevelId()).size();
+        return ModEvents.getSeatedOccupants(sensor.getSubLevelId()).size();
     }
 
     @LuaFunction
-    public String[] getOccupantsNames (OccupancySensorEntity sensor) {
+    public String[] getOccupantsNames (SeatedOccupancySensorEntity sensor) {
         var level = sensor.getLevel();
 
         if(sensor.getSubLevelId() == null || level == null) return new String[0];
 
-        if(ModEvents.getOccupantsMap().get(sensor.getSubLevelId()) != null && !ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).isEmpty()) {
-            UUID[] uuids = ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).toArray(UUID[]::new);
+        if(ModEvents.getSeatedOccupantsMap().get(sensor.getSubLevelId()) != null && !ModEvents.getSeatedOccupantsMap().get(sensor.getSubLevelId()).isEmpty()) {
+            UUID[] uuids = ModEvents.getSeatedOccupantsMap().get(sensor.getSubLevelId()).toArray(UUID[]::new);
             var len = uuids.length;
             String[] playerNames = new String[len];
             for (var i = 0; i < len; i++) {
@@ -48,11 +50,11 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
     }
 
     @LuaFunction
-    public String[] getOccupantsUUIDs (OccupancySensorEntity sensor) {
+    public String[] getOccupantsUUIDs (SeatedOccupancySensorEntity sensor) {
         var level = sensor.getLevel();
         if(sensor.getSubLevelId() == null || level == null) return new String[0];
-        if(ModEvents.getOccupantsMap().get(sensor.getSubLevelId()) != null && !ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).isEmpty()) {
-            UUID[] uuids = ModEvents.getOccupantsMap().get(sensor.getSubLevelId()).toArray(UUID[]::new);
+        if(ModEvents.getSeatedOccupantsMap().get(sensor.getSubLevelId()) != null && !ModEvents.getSeatedOccupantsMap().get(sensor.getSubLevelId()).isEmpty()) {
+            UUID[] uuids = ModEvents.getSeatedOccupantsMap().get(sensor.getSubLevelId()).toArray(UUID[]::new);
             var len = uuids.length;
             String[] uuidStrings = new String[len];
             for(var i = 0; i < len; i++) {
@@ -65,7 +67,7 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
 
 
     @LuaFunction
-    public boolean getInversionState(OccupancySensorEntity sensor) {
+    public boolean getInversionState(SeatedOccupancySensorEntity sensor) {
         var level = sensor.getLevel();
         if(sensor.getSubLevelId() == null || level == null) return false;
         var pos = sensor.getBlockPos();
@@ -74,7 +76,7 @@ public class OccupancySensorPeripheral implements GenericPeripheral {
     }
 
     @LuaFunction
-    public void setInversionState(OccupancySensorEntity sensor, boolean state) {
+    public void setInversionState(SeatedOccupancySensorEntity sensor, boolean state) {
         var level = sensor.getLevel();
         if(sensor.getSubLevelId() == null || level == null) return;
         var pos = sensor.getBlockPos();

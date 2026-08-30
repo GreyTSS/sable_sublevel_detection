@@ -1,6 +1,10 @@
 {
   "block.sable_sublevel_detection.occupancy_sensor": "Occupancy Sensor",
-  "tooltip.sable_sublevel_detection.occupancy_sensor.tooltip1": "§8Hold [§7Shift§8] for Summary",
-  "tooltip.sable_sublevel_detection.occupancy_sensor.tooltip2": "§7Provides a redstone output when the sublevel it belongs to is occupied by a player.\n\nCan be inverted when right-clicked with an empty hand.",
+  "block.sable_sublevel_detection.seated_occupancy_sensor": "Seated Occupancy Sensor",
+  "tooltip.sable_sublevel_detection.shift_tooltip": "§8Hold [§7Shift§8] for Summary",
+  "tooltip.sable_sublevel_detection.occupancy_sensor.tooltip": "§7Provides a redstone output when the sublevel it belongs to is occupied by a player.\n\nCan be inverted when right-clicked with an empty hand.",
+
+  "tooltip.sable_sublevel_detection.seated_occupancy_sensor.tooltip": "§7Provides a redstone output when the sublevel it belongs to is occupied by a player who is seated down.\n\nCan be inverted when right-clicked with an empty hand.",
+
   "creativetab.sable_sublevel_detection.detection_tab": "Sable Sublevel Detection"
 }
