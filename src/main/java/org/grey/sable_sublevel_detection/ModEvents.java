@@ -4,6 +4,7 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -43,19 +44,6 @@ public class ModEvents {
     private static final HashMap<UUID, HashSet<UUID>> seatedOccupancySensorOccupantsOld = new HashMap<>();
 
 
-    /*
-    //Current Occupants
-    private static final Map<UUID, HashSet<UUID>> sublevelSensors = new HashMap<>();
-    public static final Set<UUID> occupied = new HashSet<>();
-    public static final Map<UUID, HashSet<UUID>> occupants = new HashMap<>();
-    //End Occupants
-    private static final Map<UUID, HashSet<UUID>> newOccupants = new HashMap<>();
-    private static final Set<UUID> newOccupied = new HashSet<>();
-
-    //Delta Occupants
-    private static final Set<UUID> removedSubevels = new HashSet<>();
-    private static final Set<UUID> addedSubevels = new HashSet<>();
-*/
     //Grace
 
 
@@ -139,7 +127,8 @@ public class ModEvents {
                 sublevelsOccupiedNew.add(uuid);
                 sublevelsOccupantsNew.computeIfAbsent(uuid, k -> new HashSet<>()).add(player.getUUID());
 
-                if(seatedOccupancySensorActive && player.isPassenger())  {
+                //Seated Sensor state update
+                if(seatedOccupancySensorActive && player.isPassenger() && !(player.getVehicle() instanceof LivingEntity)) {
                     seatedPlayersNew.add(player.getUUID());
                     seatedSublevelsNew.add(uuid);
                     seatedOccupancySensorOccupantsNew.computeIfAbsent(uuid, k -> new HashSet<>()).add(player.getUUID());
@@ -148,6 +137,8 @@ public class ModEvents {
             }
         }
 
+
+        //Continue if unchanged
         if(!sublevelsOccupiedNew.equals(sublevelsOccupiedOld) || !seatedSublevelsNew.equals(seatedSublevelsOld)) {
             //Clear
             sublevelOccupiedAdded.clear();
@@ -198,7 +189,7 @@ public class ModEvents {
         }
 
 
-
+        //Clear collections
         sublevelsOccupiedOld.clear();
         sublevelsOccupiedOld.addAll(sublevelsOccupiedNew);
 
@@ -210,109 +201,7 @@ public class ModEvents {
 
         seatedSublevelsOld.clear();
         seatedSublevelsOld.addAll(seatedSublevelsNew);
-
-
-
-
-        /*
-
-
-        //Grace Period Decrement and Reentries
-        if(!gracePeriods.isEmpty()) {
-            var iterator = gracePeriods.entrySet().iterator();
-            while(iterator.hasNext()) {
-                var entry = iterator.next();
-                var key = entry.getKey();
-
-                //Re-Entered sublevels exit grace period state.
-                if(newOccupied.contains(key)) {
-                    iterator.remove();
-                    continue;
-                }
-
-
-                int newDuration = entry.getValue()-1;
-
-                if(newDuration <= 0) {
-                    changeOccupiedState(false, key, server);
-                    iterator.remove();
-                } else {
-                    entry.setValue(newDuration);
-                }
-            }
         }
-
-
-
-        //Gate heavy operations behind config frequency, and only when sensors are loaded
-        if(--tickCount > 0 || OccupancySensorEntity.loadedSensors.isEmpty()) return;
-
-        newOccupants.clear();
-        newOccupied.clear();
-        tickCount = Config.occupancyQueryTickFrequency;
-
-        var playerList = server.getPlayerList().getPlayers();
-
-        /*Sable API is unable to provide a PlayerTrackingSublevelStart event or anything of the kind. Mod author
-        stated it was unfeasible as it would be constantly firing.
-
-        The SableCompanion check is relatively heavy, contributing to 1/3 of the entire footprint of the
-        mod tick event, per testing with Spark in a single-player world with ~70 loaded sublevels each
-        containing sensors.*/
-        /*
-        for(ServerPlayer player : playerList) {
-            var sublevel = SableCompanion.INSTANCE.getTrackingOrVehicleSubLevel((Entity) player);
-            if(sublevel==null) continue;
-            var uuid = sublevel.getUniqueId();
-            newOccupied.add(uuid);
-            newOccupants.computeIfAbsent(uuid, k -> new HashSet<>()).add(player.getUUID());
-
-        }
-
-        //Gate hash operations behind a requisite that a change in worldstate has occurred
-        if(!newOccupants.equals(sublevelSensors)) {
-            removedSubevels.clear();
-            addedSubevels.clear();
-
-            removedSubevels.addAll(occupied);
-            addedSubevels.addAll(newOccupied);
-
-            removedSubevels.removeAll(newOccupied);
-            addedSubevels.removeAll(occupied);
-
-            //Only update affected blockstates
-            if(!addedSubevels.isEmpty()) changeOccupiedState(true, addedSubevels, server);
-            if(!removedSubevels.isEmpty()) {
-                for(UUID uuid : removedSubevels) {
-                    gracePeriods.put(uuid, Config.occupancyGraceTickDuration);
-                }
-            }
-
-            //Rebuild caches
-            sublevelSensors.clear();
-            for (var entry : newOccupants.entrySet()) {
-                sublevelSensors.put(entry.getKey(), new HashSet<>(entry.getValue()));
-            }
-
-            occupants.clear();
-            for (var entry : newOccupants.entrySet()) {
-                var key = entry.getKey();
-                for(var player : entry.getValue()) {
-                    occupants.computeIfAbsent(key, k -> new HashSet<>()).add(player);
-                }
-            }
-
-            occupied.clear();
-            occupied.addAll(newOccupied);
-
-
-
-        }
-
-
-        */
-
-    }
 
     private static void changeOccupiedState(boolean status, Set<UUID> occupied, Map<UUID, HashSet<PositionData>> registry, MinecraftServer server) {
         for(UUID uuid : occupied) {

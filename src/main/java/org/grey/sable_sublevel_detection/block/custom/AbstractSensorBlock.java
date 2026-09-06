@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,24 +22,28 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import org.grey.sable_sublevel_detection.SableSublevelDetection;
-import org.grey.sable_sublevel_detection.block.entity.AbstractSensorEntity;
-import org.grey.sable_sublevel_detection.block.entity.OccupancySensorEntity;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * An occupancy sensor is used to determine a sublevel's occupancy, using redstone output and *when present*,
- * ComputerCraft's peripheral API as feedback for players to automate protocols with regard to their presence.
+ * ComputerCraft's peripheral API as feedback for players to automate protocols with regard to their presence. This
+ * abstract sensor allows specialized subtypes like the seated occupancy sensor.
  */
 public abstract class AbstractSensorBlock extends BaseEntityBlock {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     public static final BooleanProperty INVERTED = BlockStateProperties.INVERTED;
 
+    public static final Map<Block, Item> SWAPPER = new HashMap<>();
+    public static final Map<Item,Block> REVERSE_SWAPPER = new HashMap<>();
     //Configuration
     public AbstractSensorBlock(Properties properties) {
         super(properties);
+
+
         this.registerDefaultState(this.defaultBlockState()
                 .setValue(POWERED, false)
                 .setValue(INVERTED, false));
@@ -57,7 +62,9 @@ public abstract class AbstractSensorBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {super.onPlace(state, level, pos, oldState, movedByPiston);};
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+    };
 
 
 
@@ -71,10 +78,24 @@ public abstract class AbstractSensorBlock extends BaseEntityBlock {
     //Inversion
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!player.getItemInHand(player.getUsedItemHand()).isEmpty()) {
-            return InteractionResult.PASS;
-        }
         if(!level.isClientSide) {
+            ItemStack usedItem = player.getItemInHand(player.getUsedItemHand());
+            Block currentBlock = level.getBlockState(pos).getBlock();
+            if (!usedItem.isEmpty()) {
+                    if(SWAPPER.containsValue(usedItem.getItem())  && REVERSE_SWAPPER.containsValue(currentBlock) && REVERSE_SWAPPER.get(usedItem.getItem()) != currentBlock) {
+                        level.setBlockAndUpdate(pos, REVERSE_SWAPPER.get(usedItem.getItem()).defaultBlockState());
+
+                        ItemStack drop = new ItemStack(SWAPPER.get(currentBlock));
+                        ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), drop);
+                        level.addFreshEntity(itemEntity);
+
+                        usedItem.consume(1, player);
+                    }
+
+                    return InteractionResult.PASS;
+            }
+
+
             boolean current = state.getValue(INVERTED);
             level.setBlockAndUpdate(pos, state.setValue(INVERTED, !current));
         }
@@ -86,5 +107,9 @@ public abstract class AbstractSensorBlock extends BaseEntityBlock {
     @Override
     protected RenderShape getRenderShape(BlockState state) {return RenderShape.MODEL;}
 
+
+
+
+    public record Swapper(Block block, Item item){};
 
 }

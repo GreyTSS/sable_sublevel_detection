@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * OccupancySensorEntity contains the static field registry of all currently loaded sensors belonging to sublevels, to limit query later.
+ * AbstractSensorEntity contains the static field registry of all currently loaded sensors belonging to sublevels, to limit query later.
  * the sublevel ID is captured on level change to allow for sensors placed globally to operate normally when assembled into sublevels.
  */
 public abstract class AbstractSensorEntity extends BlockEntity {
@@ -61,7 +61,7 @@ public abstract class AbstractSensorEntity extends BlockEntity {
         if(this.getLevel() == null || this.subLevelId == null) return;
         var sublevelSensors = getRegistry().get(subLevelId);
         if(sublevelSensors!=null) {
-            getRegistry().remove(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos())));
+            getRegistry().get(subLevelId).remove(new PositionData(GlobalPos.of(this.getLevel().dimension(), this.getBlockPos())));
             if(getRegistry().get(subLevelId).isEmpty()) getRegistry().remove(subLevelId);
         }
     }
