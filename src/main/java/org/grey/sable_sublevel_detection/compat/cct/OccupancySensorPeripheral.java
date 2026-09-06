@@ -5,7 +5,7 @@ import dan200.computercraft.api.peripheral.GenericPeripheral;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.grey.sable_sublevel_detection.ModEvents;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;
-import org.grey.sable_sublevel_detection.block.entity.OccupancySensorEntity;
+import org.grey.sable_sublevel_detection.block.entity.custom.OccupancySensorEntity;
 import java.util.UUID;
 
 import static org.grey.sable_sublevel_detection.block.custom.AbstractSensorBlock.INVERTED;

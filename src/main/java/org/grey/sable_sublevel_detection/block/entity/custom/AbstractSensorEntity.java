@@ -1,4 +1,4 @@
-package org.grey.sable_sublevel_detection.block.entity;
+package org.grey.sable_sublevel_detection.block.entity.custom;
 
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
@@ -10,11 +10,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.grey.sable_sublevel_detection.ModEvents;
 import org.grey.sable_sublevel_detection.PositionData;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
@@ -26,6 +23,8 @@ import java.util.UUID;
 public abstract class AbstractSensorEntity extends BlockEntity {
 
     private UUID subLevelId;
+
+
 
     public void captureSubLevelId(Level level) {
         if (level.isClientSide || this.subLevelId != null) return;
@@ -51,9 +50,10 @@ public abstract class AbstractSensorEntity extends BlockEntity {
         super.onLoad();
         registerSensor();
         if(subLevelId==null || this.getLevel() == null) return;
-        var occupied = ModEvents.getOccupantsMap().containsKey(subLevelId);
-        this.getLevel().setBlockAndUpdate(this.getBlockPos(), getBlockState().setValue(BlockStateProperties.POWERED, occupied));
+        checkStateOnLoad();
     }
+
+    public abstract void checkStateOnLoad();
 
     @Override
     public void setRemoved() {
@@ -79,7 +79,7 @@ public abstract class AbstractSensorEntity extends BlockEntity {
     }
 
 
-    protected abstract Map<UUID,HashSet<PositionData>>getRegistry();
+    public abstract Map<UUID,HashSet<PositionData>>getRegistry();
 
 
 

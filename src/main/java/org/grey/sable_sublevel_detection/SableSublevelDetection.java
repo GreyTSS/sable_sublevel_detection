@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 @Mod(SableSublevelDetection.MODID)
 public class SableSublevelDetection {
     public static final String MODID = "sable_sublevel_detection";
-    public static final String MOD_VERSION = "1.1b1";
+    public static final String MOD_VERSION = "1.1";
     public static final String CONFIG_VERSION = "1.0";
 
     private static final Logger LOGGER = LogUtils.getLogger();
