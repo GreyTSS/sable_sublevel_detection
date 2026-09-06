@@ -5,8 +5,7 @@ import dan200.computercraft.api.peripheral.GenericPeripheral;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.grey.sable_sublevel_detection.ModEvents;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;
-import org.grey.sable_sublevel_detection.block.entity.OccupancySensorEntity;
-import org.grey.sable_sublevel_detection.block.entity.SeatedOccupancySensorEntity;
+import org.grey.sable_sublevel_detection.block.entity.custom.SeatedOccupancySensorEntity;
 
 import java.util.UUID;
 

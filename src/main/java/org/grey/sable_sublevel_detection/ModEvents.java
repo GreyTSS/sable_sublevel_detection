@@ -9,8 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import org.grey.sable_sublevel_detection.block.entity.OccupancySensorEntity;
-import org.grey.sable_sublevel_detection.block.entity.SeatedOccupancySensorEntity;
+import org.grey.sable_sublevel_detection.block.entity.custom.OccupancySensorEntity;
+import org.grey.sable_sublevel_detection.block.entity.custom.SeatedOccupancySensorEntity;
 
 import java.util.*;
 
@@ -37,8 +37,8 @@ public class ModEvents {
     //Seated Occupancy Sensor
     private static final HashSet<UUID> seatedPlayersNew = new HashSet<>();
 
-    private static final HashSet<UUID> seatedSublevelsNew  = new HashSet<>();
-    private static final HashSet<UUID> seatedSublevelsOld  = new HashSet<>();
+    public static final HashSet<UUID> seatedSublevelsNew  = new HashSet<>();
+    public static final HashSet<UUID> seatedSublevelsOld  = new HashSet<>();
 
     private static final HashMap<UUID, HashSet<UUID>> seatedOccupancySensorOccupantsNew = new HashMap<>();
     private static final HashMap<UUID, HashSet<UUID>> seatedOccupancySensorOccupantsOld = new HashMap<>();
@@ -132,7 +132,7 @@ public class ModEvents {
                     seatedPlayersNew.add(player.getUUID());
                     seatedSublevelsNew.add(uuid);
                     seatedOccupancySensorOccupantsNew.computeIfAbsent(uuid, k -> new HashSet<>()).add(player.getUUID());
-                    System.out.println("Player "+player.getName().getString()+" has seated.");
+
                 }
             }
         }
@@ -165,7 +165,7 @@ public class ModEvents {
 
             //Occupancy Sensor
             if(occupancySensorActive && !sublevelOccupiedAdded.isEmpty()) {
-                Set<UUID> occupancyUpdates = new HashSet<UUID>();
+                Set<UUID> occupancyUpdates = new HashSet<>();
                 changeOccupiedState(true, sublevelOccupiedAdded, OccupancySensorEntity.loadedSensors, server);
             }
 
@@ -180,6 +180,7 @@ public class ModEvents {
 
             //Seated Occupancy Sensor
             if(seatedOccupancySensorActive && !seatedAdded.isEmpty()) {
+
                 changeOccupiedState(true, seatedAdded, SeatedOccupancySensorEntity.loadedSensors, server);
             }
             if(seatedOccupancySensorActive && !seatedRemoved.isEmpty()) {
@@ -191,15 +192,14 @@ public class ModEvents {
 
         //Clear collections
         sublevelsOccupiedOld.clear();
-        sublevelsOccupiedOld.addAll(sublevelsOccupiedNew);
-
         occupancySensorOccupantsOld.clear();
-        occupancySensorOccupantsOld.putAll(occupancySensorOccupantsNew);
-
         seatedOccupancySensorOccupantsOld.clear();
-        seatedOccupancySensorOccupantsOld.putAll(seatedOccupancySensorOccupantsNew);
-
         seatedSublevelsOld.clear();
+
+        //Update Cache
+        sublevelsOccupiedOld.addAll(sublevelsOccupiedNew);
+        occupancySensorOccupantsOld.putAll(occupancySensorOccupantsNew);
+        seatedOccupancySensorOccupantsOld.putAll(seatedOccupancySensorOccupantsNew);
         seatedSublevelsOld.addAll(seatedSublevelsNew);
         }
 
@@ -239,6 +239,7 @@ public class ModEvents {
     public static Map<UUID, HashSet<UUID>> getSeatedOccupantsMap() {
         return(new HashMap<>(seatedOccupancySensorOccupantsNew));
     }
+
 
 
 

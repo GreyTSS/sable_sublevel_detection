@@ -6,6 +6,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.grey.sable_sublevel_detection.SableSublevelDetection;
 import org.grey.sable_sublevel_detection.block.ModBlocks;
+import org.grey.sable_sublevel_detection.block.entity.custom.OccupancySensorEntity;
+import org.grey.sable_sublevel_detection.block.entity.custom.SeatedOccupancySensorEntity;
 
 import java.util.function.Supplier;
 
