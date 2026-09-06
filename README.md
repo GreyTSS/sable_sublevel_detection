@@ -2,7 +2,7 @@
 # Sable: Sublevel Detection - Dead Man's Switch
 This mod, as well as its assets, were created by human hands. No Generative AI was used for any of the code, English, or art in this mod.
 
-A mod that currently adds a single sensor to interact with Sable sublevels and give players redstone feedback related to whether a sublevel is being tracked by a player or not.
+A mod that currently adds two sensors to interact with Sable sublevels and give players redstone feedback related to whether a sublevel is being tracked by a player or not.
 
 Through exposed methods usable in-game through CC: Tweaked's CraftOS, you can gain access to the names or UUIDs of those occupying your sublevel, as well as the occupancy count of the entire sublevel.
 
@@ -26,8 +26,17 @@ The imaginative can take this behavior further through the assistance of CC: Twe
     * A block that emits a Redstone Signal when on a Sable Sublevel that is currently occupied by one or many players. 
     * Signal can be inverted by right-clicking with an empty hand.
     
+- Seated Occupancy Sensor:
+    * A block that emits a Redstone Signal when on a Sable Sublevel that is currently occupied by one or many *seated* players.
+    * Signal can be inverted by right-clicking with an empty hand. 
 
-- Optional CC:Tweaked Compatibility. Occupancy Sensor can be wrapped as a peripheral, exposing the following functions inside of CraftOS:
+- Sensor Swapping:
+    * Sensors each are crafted with a similar crafting recipe, aside from one unique item. The Occupancy sensor has an Eye of Ender, while a Seated Occupancy Sensor uses a Minecart.
+    * A placed sensor can be swapped to a different sensor type by right-clicking it while holding the desired sensor's unique crafting item.
+    * The previous sensor's unique item is ejected during the swap.
+
+
+- Optional CC:Tweaked Compatibility. Both the Occupancy Sensor, and Seated Occupancy Sensor, can be wrapped as a peripheral, exposing the following functions inside of CraftOS:
     * getOccupancyCount()
     * getOccupantsNames()
     * getOccupantsUUIDs()
@@ -60,7 +69,7 @@ This is the best I could figure to optimize it within the bounds of what Sable p
 
 
 ## Roadmap
-v1.1
+v1.2
 - Add a decay system to the Occupancy Sensor, allowing for each block to be configured to drop their redstone signal linearly across a defined tick amount the moment a sublevel becomes unoccupied. 
 
 - Ponder sequence for the sensor.
@@ -69,3 +78,7 @@ v1.1
 
 Future:
 - More sensor types
+
+
+## Credits:
+Tefra_K: Artist
